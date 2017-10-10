@@ -1,0 +1,127 @@
+package word.count;
+import java.util.*;
+public class WordCount {
+private static class WordSet implements Set{
+    private Map map=new HashMap();
+    public int size(){
+       return map.size();
+    }
+   
+    public boolean isEmpty(){
+       return map.isEmpty();
+    }
+    public boolean contains(Object o){
+       return map.containsKey(o);
+    }
+    public Iterator iterator(){
+       return map.keySet().iterator();
+    }
+    public Object[] toArray(){
+       return map.keySet().toArray();
+    }
+    public Object[] toArray(Object[] a){
+       return map.keySet().toArray(a);
+    }
+    public boolean add(Object o){
+       if(map.containsKey(o)){
+           ((Word)map.get(o)).increase();
+       }
+       else {
+           map.put(o, o);
+       }
+       return true;
+    }
+    public boolean remove(Object o){
+          return false;
+         }
+    public boolean addAll(Collection c){
+           return false;
+         }
+    public boolean removeAll(Collection c){
+          return false;
+         }
+    public boolean retainAll(Collection c){
+          return false;
+         }
+    public boolean containsAll(Collection c){
+          return map.keySet().containsAll(c);
+         }
+    public void clear(){}
+    public boolean equals(Object c){
+          return map.keySet().equals(c);
+         }
+    public int hashCode(){
+          return map.keySet().hashCode();
+         }
+}
+public static Set getWordCount(String s,Comparator order){
+      Set set=new WordSet();
+      String split1="[^a-zA-Z\\-_']+";
+      String split2="[^a-zA-Z]+[\\-_'][^a-zA-Z]*";
+      String split3="[^a-zA-Z]*[\\-_'][^a-zA-Z]+";
+     
+      String regex = "("+split2+")|("+split3+")|("+split1+")";
+      String[] words = s.split(regex);
+      for(int i=0;i<words.length;i++){
+       set.add(new Word(words[i]));
+      }
+      Set sort=new TreeSet(order);
+      sort.addAll(set);
+     
+      return Collections.synchronizedSet(sort);
+     }
+     public static Comparator DICTIONARY_ORDER=new Comparator(){
+      public int compare(Object o1,Object o2){
+       Word w1=(Word)o1;
+       Word w2=(Word)o2;
+       return w1.getWord().compareTo(w2.getWord());
+      }
+     };
+     public static Comparator FREQUENCY_ORDER =new Comparator(){
+      public int compare(Object o1,Object o2){
+       Word w1=(Word)o1;
+       Word w2=(Word)o2;
+       int i=w2.getCount()-w1.getCount();
+       if(i==0){
+        return w1.getWord().compareTo(w2.getWord());
+       }
+       return i;
+      }
+     };
+     public static void main(String[] args)
+     {
+      String s="the happy fish dances in the happy water, both happy";
+        Set set=WordCount.getWordCount(s,WordCount.FREQUENCY_ORDER);
+        for(Iterator it=set.iterator();it.hasNext();){
+         Word w=(Word)it.next();
+         int i=4-w.getWord().length()/8;
+         String tab="";
+         for(int j=0;j<i;j++)
+          tab+="\t";
+         System.out.println(w.getWord()+tab+w.getCount());
+        }
+     }
+    }
+    package test2;
+public class work2{
+	private String value;
+    public void Word(String value){
+    		this.value=value.toLowerCase();
+    }
+    private int count=1;
+    protected void increase(){
+    	count++;
+    public String getWord(){
+	return value;
+}
+    }
+    public int getCount() {
+    return count;
+    }
+    public boolean equals(Object o){
+    	return (o instanceof Word)&&(((Word)o).value.equals(value));
+       }
+    public int hashCode(){
+    	return value.hashCode();
+    }
+}
